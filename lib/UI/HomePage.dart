@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:digiui_sample/UI/ProductsPage.dart';
 import 'package:digiui_sample/models/Banner.dart';
 import 'package:digiui_sample/models/SpecialOfeerModel.dart';
 import 'package:dio/dio.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../models/Slide.dart';
+import '../widgets/BottomNav.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -101,13 +103,22 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       endDrawer: Drawer(),
       appBar: AppBar(
-        title: Text("فروشگاه اینترنتی"),
+        title: Text("فروشگاه اینترنتی"  ,style: TextStyle(fontFamily: "iranyekan"),),
         centerTitle: true,
         backgroundColor: Color(0xFFef4758),
         leading:  IconButton(
             onPressed: ()=>{},
             icon: Icon(Icons.shopping_cart_outlined)),
       ),
+
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){},
+        child: Icon(Icons.add ),
+        backgroundColor: Colors.grey[600],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomNav(),
 
       body:SingleChildScrollView(
         child: Container(
@@ -200,12 +211,15 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                               Padding( padding: const EdgeInsets.only(bottom: 5),
                                                 child:Expanded(
-                                                  child: OutlinedButton(onPressed: (){},
+                                                  child: OutlinedButton(
+                                                      onPressed: (){
+                                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductsPage())) ;
+                                                      },
                                                       style:OutlinedButton.styleFrom(
                                                         side: BorderSide(color: Colors.white) ,
 
                                                       ),
-                                                      child: Text("مشاهده همه" , style: TextStyle(color: Colors.white),)
+                                                      child: Text("مشاهده همه" , style: TextStyle(color: Colors.white , fontFamily: "iranyekan"),)
 
                                                   ),
 
@@ -342,11 +356,11 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   Padding(
-                  padding:EdgeInsets.all(10),
-                  child :Image.network(specialOfferModel.imageUrl  , height: 160 ,fit:BoxFit.fill,)
+                  padding:EdgeInsets.all(5),
+                  child :Image.network(specialOfferModel.imageUrl  , height: 150 ,fit:BoxFit.fill,)
                   ) ,
                   Padding(padding: EdgeInsets.only(top: 5) ,
-                  child: Text(specialOfferModel.product_name , ),
+                  child: Text(specialOfferModel.product_name  ,style: TextStyle(fontFamily: "iranyekan")),
                   ) ,
                   Expanded(
                       child:Container(
@@ -361,13 +375,13 @@ class _HomePageState extends State<HomePage> {
                                         Padding(padding: EdgeInsets.only(top: 3),
                                         child:Row(
                                           children: [
-                                            Text("تومان" , style:TextStyle(fontSize: 12) ,),
-                                            Text(specialOfferModel.off_price.toString() , style:TextStyle(fontSize: 16) ,),
+                                            Text("تومان" , style:TextStyle(fontSize: 12 , fontFamily: "iranyekan") ,),
+                                            Text(specialOfferModel.off_price.toString() , style:TextStyle(fontSize: 16 ,fontFamily: "iranyekan") ,),
                                           ],
                                         )
                                         ),
                                         Padding(padding: EdgeInsets.only(top: 2),
-                                          child: Text(specialOfferModel.price.toString() , style:TextStyle(fontSize: 12 , decoration: TextDecoration.lineThrough) ,),
+                                          child: Text(specialOfferModel.price.toString() , style:TextStyle(fontFamily: "iranyekan" , fontSize: 12 , decoration: TextDecoration.lineThrough) ,),
                                         )
                                       ],
 
