@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:ffi';
 
+import 'package:digiui_sample/models/SpecialOfeerModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_indicators/progress_indicators.dart';
@@ -17,6 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
    late Future<List<Slide>>  imageSlider_future ;
+   late Future<List<SpecialOfferModel>>  specialOffers_future ;
 
    PageController pageController = PageController() ;
 
@@ -27,20 +30,20 @@ class _HomePageState extends State<HomePage> {
 
 
     imageSlider_future =  getimageSliderData() ;
-
+    specialOffers_future = getSpecialOffersData() ;
   }
 
   Future<List<Slide>> getimageSliderData() async {
 
     List<Slide> imageSlides =[] ;
 
-    var respone =  await Dio().get("https://zhoobinarad.ir/digiui_api/getPageViewData.php") ;
-
+    var respone =  await Dio().get("http://mhnaddaf.ir/digiui_api/getPageViewData.php") ;
     if(respone.statusCode== 200)
     {
       var datas =  json.decode(respone.data) ;
         datas.forEach( (var data)
         {
+
           imageSlides.add(Slide(data["name"], data["imageUrl"])) ;
         }
       ) ;
@@ -48,6 +51,30 @@ class _HomePageState extends State<HomePage> {
     return imageSlides ;
   }
 
+   Future<List<SpecialOfferModel>> getSpecialOffersData() async {
+
+     List<SpecialOfferModel> specialOffers =[] ;
+
+     var respone =  await Dio().get("http://mhnaddaf.ir/digiui_api/getSpecialOffersData.php") ;
+    
+     if(respone.statusCode== 200)
+     {
+       var datas =  json.decode(respone.data) ;
+       datas.forEach( (var data)
+       {
+
+         specialOffers.add(SpecialOfferModel(
+                                             data["product_name"],
+                                             data["price"],
+                                             data["off_price"],
+                                             data["off_percent"],
+                                             data["imageUrl"])) ;}) ;
+     }
+
+     print("array has : "+ specialOffers.length.toString() + " element") ;
+
+     return specialOffers ;
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +83,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("فروشگاه اینترنتی"),
         centerTitle: true,
-        backgroundColor: Colors.red,
+        backgroundColor: Color(0xFFef4758),
         leading:  IconButton(
             onPressed: ()=>{},
             icon: Icon(Icons.shopping_cart_outlined)),
@@ -66,7 +93,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             Container(
-              height: 250,
+              height: 200,
 
               child: FutureBuilder<List<Slide>>(
                   future: imageSlider_future,
@@ -120,6 +147,76 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
               ),
+            ) ,
+            Container(
+              height: 10,
+            )
+            ,
+            Container(
+              height: 300,
+              color: Color(0xFFef4758),
+              child: FutureBuilder<List<SpecialOfferModel>>(
+                  future: specialOffers_future,
+                  builder: (context ,  snapshot){
+                      if(snapshot.hasData)
+                      {
+                        List<SpecialOfferModel>? special_data =  snapshot.data ;
+
+                        return ListView.builder(
+                            reverse: true,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount:special_data!.length ,
+                            itemBuilder: (context ,  position)
+                              {
+                                if(position ==0 )
+                                  {
+                                    return Container(
+                                      height: 300,
+                                      width: 150,
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 15 , left: 10 , right: 10),
+                                            child: Image.asset("assets/images/specialoffer.png",  height: 230 ,),
+                                          ),
+                                          Padding( padding: const EdgeInsets.only(bottom: 5),
+                                            child:Expanded(
+                                              child: OutlinedButton(onPressed: (){},
+                                                  style:OutlinedButton.styleFrom(
+                                                    side: BorderSide(color: Colors.white) ,
+
+                                                  ),
+                                                  child: Text("مشاهده همه" , style: TextStyle(color: Colors.white),)
+
+                                              ),
+
+                                            )
+                                          )
+
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                else
+                                  {
+                                    return SpecialOfferItem(special_data[position-1]) ;
+                                  }
+                              }
+
+                        ) ;
+                      }
+                      else
+                      {
+                        return Center(
+                          child: JumpingDotsProgressIndicator(
+                            fontSize: 60,
+                            dotSpacing: 5,
+                          ),
+                        ) ;
+                      }
+                  }
+              ),
             )
           ],
         ),
@@ -140,6 +237,80 @@ class _HomePageState extends State<HomePage> {
          ),
       )  ;
 
+   }
+
+   Container SpecialOfferItem(SpecialOfferModel specialOfferModel)
+   {
+
+     return Container(
+        width: 200,
+        height: 300,
+        child: Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            child: Container(
+              width: 200,
+              child: Column(
+                children: [
+                  Padding(
+                  padding:EdgeInsets.all(10),
+                  child :Image.network(specialOfferModel.imageUrl  , height: 150 ,fit:BoxFit.fill,)
+                  ) ,
+                  Padding(padding: EdgeInsets.only(top: 5) ,
+                  child: Text(specialOfferModel.product_name , ),
+                  ) ,
+                  Expanded(
+                      child:Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10 , left: 10),
+                                  child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Padding(padding: EdgeInsets.only(top: 3),
+                                        child:Row(
+                                          children: [
+                                            Text("تومان" , style:TextStyle(fontSize: 12) ,),
+                                            Text(specialOfferModel.off_price.toString() , style:TextStyle(fontSize: 16) ,),
+                                          ],
+                                        )
+                                        ),
+                                        Padding(padding: EdgeInsets.only(top: 2),
+                                          child: Text(specialOfferModel.price.toString() , style:TextStyle(fontSize: 12 , decoration: TextDecoration.lineThrough) ,),
+                                        )
+                                      ],
+
+                                  ),
+                                ) ,
+                                Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(bottom: 10 , right: 10),
+                                    child: Container(
+                                      decoration: new BoxDecoration(
+                                        color: Color(0xFFef4758) ,
+                                        borderRadius: BorderRadius.all(Radius.circular(10))
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(5),
+                                        child: Text(specialOfferModel.off_percent.toString() + " % " , style: TextStyle(color: Colors.white),),
+                                      ),
+
+                                    ),
+                                  ),
+                                )
+                              ],
+                          ),
+                      )
+                  )
+
+                ],
+              ),
+              
+            ),
+        ),
+     ) ;
    }
 
 
