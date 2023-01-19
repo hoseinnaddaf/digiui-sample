@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:digiui_sample/UI/SingleProduct.dart';
 import 'package:digiui_sample/widgets/BottomNav.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +76,7 @@ class _ProductsPageState extends State<ProductsPage> {
         title: Text("محصولات" , style: TextStyle(fontFamily: "iranyekan"),),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: (){}, icon: Icon( Icons.share)) ,
+          //  IconButton(onPressed: (){}, icon: Icon( Icons.share)) ,
         ],
       ),
       body: Container(
@@ -113,76 +114,81 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
-  Card generateItem(SpecialOfferModel model)
+  InkWell generateItem(SpecialOfferModel model)
   {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
-      elevation: 5,
-      child: Center(
-        child: Expanded(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 5),
-                child: Container(
-                  width: 75,
-                  height: 75,
-                  child: Image.network(model.imageUrl),
-                ),
-              ) ,
-              Padding(
-                  padding: EdgeInsets.only(top: 2) ,
-                  child: Text(model.product_name ,  style: TextStyle(fontFamily: "iranyekan"),)
-              ) ,
-              Expanded(
-                  child:Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5 , left: 10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Padding(padding: EdgeInsets.only(top: 3),
-                                  child:Row(
-                                    children: [
-                                      Text("تومان" , style:TextStyle(fontSize: 12 , fontFamily: "iranyekan") ,),
-                                      Text(model.off_price.toString() , style:TextStyle(fontSize: 16 ,fontFamily: "iranyekan") ,),
-                                    ],
-                                  )
-                              ),
-                              Padding(padding: EdgeInsets.only(top: 2),
-                                child: Text(model.price.toString() , style:TextStyle(fontFamily: "iranyekan" , fontSize: 12 , decoration: TextDecoration.lineThrough) ,),
-                              )
-                            ],
-
-                          ),
-                        ) ,
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: 5 , right: 10),
-                            child: Container(
-                              decoration: new BoxDecoration(
-                                  color: Color(0xFFef4758) ,
-                                  borderRadius: BorderRadius.all(Radius.circular(10))
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.all(5),
-                                child: Text(model.off_percent.toString() + " % " , style: TextStyle(color: Colors.white),),
-                              ),
+    return InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleProduct(model))) ;
+      }
+      ,child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+        elevation: 5,
+        child: Center(
+          child: Expanded(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: Container(
+                    width: 75,
+                    height: 75,
+                    child: Image.network(model.imageUrl),
+                  ),
+                ) ,
+                Padding(
+                    padding: EdgeInsets.only(top: 2) ,
+                    child: Text(model.product_name ,  style: TextStyle(fontFamily: "iranyekan"),)
+                ) ,
+                Expanded(
+                    child:Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5 , left: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Padding(padding: EdgeInsets.only(top: 3),
+                                    child:Row(
+                                      children: [
+                                        Text("تومان" , style:TextStyle(fontSize: 12 , fontFamily: "iranyekan") ,),
+                                        Text(model.off_price.toString() , style:TextStyle(fontSize: 16 ,fontFamily: "iranyekan") ,),
+                                      ],
+                                    )
+                                ),
+                                Padding(padding: EdgeInsets.only(top: 2),
+                                  child: Text(model.price.toString() , style:TextStyle(fontFamily: "iranyekan" , fontSize: 12 , decoration: TextDecoration.lineThrough) ,),
+                                )
+                              ],
 
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-              )
-            ],
-          ),
-        )
+                          ) ,
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 5 , right: 10),
+                              child: Container(
+                                decoration: new BoxDecoration(
+                                    color: Color(0xFFef4758) ,
+                                    borderRadius: BorderRadius.all(Radius.circular(10))
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(5),
+                                  child: Text(model.off_percent.toString() + " % " , style: TextStyle(color: Colors.white),),
+                                ),
+
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                )
+              ],
+            ),
+          )
+        ),
       ),
     ) ;
   }
